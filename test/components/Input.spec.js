@@ -1,17 +1,22 @@
 import Vue from 'vue'
-import { shallowMount, mount } from '@vue/test-utils'
+import { mount } from '@vue/test-utils'
 import Vuetify from 'vuetify'
 import Input from '@/components/Input.vue'
 
 describe('Input', () => {
   let wrapper
-  Vue.use(Vuetify, {})
+  // Vue.use(Vuetify, {})
 
   beforeEach(() => {
-    wrapper = shallowMount(Input, {
-      Vue, // createLocalVue gives error is used with shallowMount [BUG]
+    const vuetify = new Vuetify()
+    Vue.use(vuetify)
+
+    wrapper = mount(Input, {
+      Vue,
+      vuetify,
       propsData: {
         label: 'meow',
+        rules: [],
         hideDetails: false
       }
     })
@@ -41,34 +46,29 @@ describe('Input', () => {
   })
 
   test('should load label', async () => {
-    const label = wrapper.find('v-label-stub')
+    const label = wrapper.find('.v-label')
     wrapper.setProps({ label: 'test label' })
 
     await wrapper.vm.$nextTick()
 
     expect(label.exists()).toBe(true)
     expect(label.text()).toBe('test label')
-    expect(label.classes()).toContain('sb-input-label')
+    expect(label.classes()).toContain('theme--light')
   })
 
   test('should load input value', async () => {
-    const input = wrapper.find('v-text-field-stub')
+    const input = wrapper.find('.v-text-field')
     wrapper.setProps({ value: 'test value' })
 
     await wrapper.vm.$nextTick()
 
     expect(input.exists()).toBe(true)
-    expect(input.attributes().value).toBe('test value')
-  })
-
-  test('should test true added attrs into input', () => {
-    const input = wrapper.find('v-text-field-stub')
-    expect(input.attributes().outlined).toBe('true')
-    expect(input.attributes().singleline).toBe('true')
+    // console.log(input.vm.value)
+    expect(input.vm.value).toBe('test value')
   })
 
   test('should load rules', async () => {
-    const input = wrapper.find('v-text-field-stub')
+    const input = wrapper.find('.v-text-field')
     const mockedRules = [false]
     wrapper.setProps({ rules: mockedRules })
     await wrapper.vm.$nextTick()
@@ -79,8 +79,8 @@ describe('Input', () => {
 describe('testing input reusability', () => {
   Vue.use(Vuetify)
   const comp = {
-    template: "<sb-input :hide-details='false' :rules='[rules]' label='label' />",
-    components: { 'sb-input': Input }
+    template: "<ng-input :hide-details='false' :rules='[rules]' label='label' />",
+    components: { 'ng-input': Input }
   }
   const validator = () => false
   const wrapper = mount(comp, {

@@ -3,23 +3,19 @@
     :center="{lat:10, lng:10}"
     :zoom="7"
     map-type-id="terrain"
-    style="width: 500px; height: 300px"
-  >
-    <GmapMarker
-      v-for="(m, index) in markers"
-      :key="index"
-      :position="m.position"
-      :clickable="true"
-      :draggable="true"
-      @click="center=m.position"
-    />
-  </GmapMap>
+    style="width: 500px; height: 600px"
+    @click="getLocation"
+  />
 </template>
 
 <script>
 export default {
-  name: 'Map'
-
+  name: 'Map',
+  methods: {
+    getLocation (e) {
+      this.$emit('map', { lat: e.latLng.lat(), lng: e.latLng.lng() })
+    }
+  }
 }
 </script>
 

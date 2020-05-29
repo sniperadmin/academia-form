@@ -1,56 +1,45 @@
 <template>
   <v-row>
-    <!-- <div class="text-center">
-      <logo />
-      <vuetify-logo />
-    </div> -->
     <v-col>
       <v-card>
         <v-card-title class="headline">
           Input Form
         </v-card-title>
         <v-card-text>
-          <Input
-            v-model="userInfo.name"
-            :rules="[rules.required]"
-            :hide-details="false"
-            label="Name"
-          />
-          <Input
-            v-model="userInfo.email"
-            :rules="[rules.required, rules.email]"
-            :hide-details="false"
-            label="Email"
-          />
-          <Input
-            v-model="userInfo.mobile"
-            :rules="[rules.required, rules.intCode]"
-            :hide-details="false"
-            label="Mobile"
-          />
-          <Input
-            v-model="userInfo.address"
-            :rules="[rules.required]"
-            :hide-details="false"
-            label="Address"
-          />
-          <gmap-autocomplete class="introInput">
-            <template v-slot:input="slotProps">
-              <Input
-                ref="input"
-                outlined
-                prepend-inner-icon="place"
-                placeholder="Location Of Event"
-                @listeners="slotProps.listeners"
-                @attrs="slotProps.attrs"
-              />
-            </template>
-          </gmap-autocomplete>
+          <v-form v-model="valid">
+            <Input
+              v-model="userInfo.name"
+              :rules="[rules.required]"
+              :hide-details="false"
+              label="Name"
+            />
+            <Input
+              v-model="userInfo.email"
+              :rules="[rules.required, rules.email]"
+              :hide-details="false"
+              label="Email"
+            />
+            <Input
+              v-model="userInfo.mobile"
+              :rules="[rules.required, rules.phone.intCode]"
+              :hide-details="false"
+              label="Mobile"
+            />
+            <Input
+              v-model="userInfo.calculated"
+              text-area
+              :rules="[rules.required]"
+              :hide-details="false"
+              label="Address"
+            />
+          </v-form>
         </v-card-text>
         <v-card-actions>
           <v-spacer />
           <v-btn
+            :disabled="!valid"
             color="primary"
+            @click="submitInfo"
           >
             Continue
           </v-btn>
@@ -58,7 +47,7 @@
       </v-card>
     </v-col>
     <v-col>
-      <Map />
+      <Map @map="logMap" />
     </v-col>
   </v-row>
 </template>
@@ -66,24 +55,42 @@
 <script>
 import Map from '../components/Map.vue'
 import Input from '../components/Input.vue'
-// import Logo from '~/components/Logo.vue'
-// import VuetifyLogo from '~/components/VuetifyLogo.vue'
 import formRules from '@/mixins/formRules'
+require('@/mocks/mirage')
+
 export default {
   components: {
-    // Logo,
-    // VuetifyLogo,
     Input,
     Map
   },
   mixins: [formRules],
   data: () => ({
+    valid: false,
     userInfo: {
       name: null,
       email: null,
       mobile: null,
-      address: null
+      calculated: null
+    },
+    savedSubmissionID: null
+  }),
+  mounted () {
+    fetch('/api/profiles').then((res) => { return res.json() }).then(json => console.log(json))
+  },
+  methods: {
+    logMap (e) {
+      this.userInfo.calculated = `latitude: ${e.lat}, longitude: ${e.lng}`
+    },
+    submitInfo () {
+      fetch('/api/profiles', {
+        method: 'POST',
+        body: JSON.stringify(this.userInfo)
+      }).then((res) => {
+        return res.json()
+      }).then((json) => { this.savedSubmissionID = json.profile.id }).then(() => {
+        this.$router.push({ name: 'confirm', params: { id: this.savedSubmissionID } })
+      })
     }
-  })
+  }
 }
 </script>
