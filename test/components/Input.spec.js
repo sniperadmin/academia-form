@@ -27,7 +27,7 @@ describe('Input', () => {
   })
 
   test('is a Vue instance', () => {
-    expect(wrapper.isVueInstance()).toBeTruthy()
+    expect(wrapper.vm).toBeTruthy()
   })
 
   test('checks props type', () => {
