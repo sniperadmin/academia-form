@@ -74,9 +74,7 @@ export default {
     },
     savedSubmissionID: null
   }),
-  mounted () {
-    fetch('/api/profiles').then((res) => { return res.json() }).then(json => console.log(json))
-  },
+
   methods: {
     logMap (e) {
       this.userInfo.calculated = `latitude: ${e.lat}, longitude: ${e.lng}`
@@ -89,7 +87,7 @@ export default {
         return res.json()
       }).then((json) => { this.savedSubmissionID = json.profile.id }).then(() => {
         this.$router.push({ name: 'confirm', params: { id: this.savedSubmissionID } })
-      })
+      }).catch(() => {})
     }
   }
 }

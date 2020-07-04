@@ -2,7 +2,6 @@ import Vue from 'vue'
 import { shallowMount, createLocalVue } from '@vue/test-utils'
 import Vuetify from 'vuetify'
 import Map from '@/components/Map.vue'
-import jestConfig from '~/jest.config'
 
 describe('Map', () => {
   let wrapper
@@ -36,9 +35,13 @@ describe('Map', () => {
 
   test('should emit click event', async () => {
     const map = wrapper.find('GmapMap-stub')
+    const mockGetLocation = jest.spyOn(wrapper.vm, 'getLocation')
+      .mockImplementation(() => { return { lat: 0, lng: 0 } })
 
-    await map.trigger('click')
+    wrapper.vm.$on('click', mockGetLocation)
+    map.trigger('click')
+    await wrapper.vm.$emit('click')
 
-    expect(wrapper.vm.getLocation()).toHaveBeenCalled()
+    expect(mockGetLocation).toHaveBeenCalled()
   })
 })
