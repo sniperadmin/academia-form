@@ -5,7 +5,5 @@ Vue.use(VueGoogleMaps, {
   load: {
     key: process.env.MAPS_API,
     libraries: 'places'
-    // OR: libraries: 'places,drawing'
-    // OR: libraries: 'places,drawing,visualization'
   }
 })

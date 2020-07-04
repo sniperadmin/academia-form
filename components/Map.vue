@@ -9,11 +9,12 @@
 </template>
 
 <script>
+import { getCors } from '@/helpers/emitLatLng'
 export default {
   name: 'Map',
   methods: {
-    getLocation (e) {
-      this.$emit('map', { lat: e.latLng.lat(), lng: e.latLng.lng() })
+    getLocation () {
+      getCors()
     }
   }
 }
