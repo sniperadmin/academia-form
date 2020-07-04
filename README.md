@@ -1,5 +1,8 @@
 # academia-form
 
+![CI-Jest](https://github.com/sniperadmin/academia-form/workflows/CI-Jest/badge.svg)
+![Coverage-Monitor](https://github.com/sniperadmin/academia-form/workflows/Coverage-Monitor/badge.svg)
+
 > pre-join task
 
 ## Build Setup
